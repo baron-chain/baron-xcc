@@ -1,0 +1,62 @@
+name: Continuous integration
+
+permissions:
+  contents: read
+
+on: [pull_request]
+
+jobs:
+  test:
+    name: Test Suite
+    runs-on: [self-hosted, linux]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - run: git fetch --prune --unshallow
+      - name: Install System Dependencies
+        run: |
+            sudo apt-get update && sudo apt-get install -y \
+            cmake pkg-config libssl-dev git clang curl libc6-dev protobuf-compiler
+      - name: Set variables
+        run: |
+            echo "TOOLCHAIN=$(rustup show active-toolchain | cut -d " " -f1)" >> $GITHUB_ENV
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.TOOLCHAIN }}
+          components: rustfmt
+      - name: cargo fmt
+        run: |
+          cargo fmt --all -- --check
+      - name: cargo check
+        run: |
+          cargo check --release --workspace
+      - name: cargo try-runtime check
+        run: |
+          cargo check --release --workspace --features try-runtime
+      - name: cargo test all except interlay
+        run: |
+          cargo test --release --workspace --features runtime-benchmarks
+      - name: cargo test interlay
+        run: |
+          cargo test --release -p parachain-tests --features with-interlay-runtime
+      - name: cargo build
+        run: |
+          cargo build --bin interbtc-parachain --release --features runtime-benchmarks
+      - name: benchmarks
+        run: |
+          ./target/release/interbtc-parachain benchmark pallet \
+            --pallet '*' \
+            --extrinsic '*' \
+            --wasm-execution=compiled \
+            --steps 2 --repeat 1 \
+            --template .deploy/runtime-weight-template.hbs \
+            --chain interlay-dev --output parachain/runtime/interlay/src/weights/ 
+          ./target/release/interbtc-parachain benchmark pallet \
+            --pallet '*' \
+            --extrinsic '*' \
+            --wasm-execution=compiled \
+            --steps 2 --repeat 1 \
+            --template .deploy/runtime-weight-template.hbs \
+            --chain kintsugi-dev --output parachain/runtime/kintsugi/src/weights/ 
