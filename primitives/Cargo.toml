@@ -1,8 +1,8 @@
 [package]
-authors = ["Interlay Ltd"]
-edition = "2021"
-name = "interbtc-primitives"
+name = "bcbtc-primitives"
 version = "1.2.0"
+authors = ["Baron Chain"]
+edition = "2021"
 
 [dependencies]
 bstringify = "0.1.2"
@@ -16,7 +16,7 @@ scale-encode = { version = "0.3.0", default-features = false, features = ["deriv
 # Substrate dependencies
 sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.31", default-features = false, optional = true }
 
-# Parachain dependencies
+# Local dependencies
 bitcoin = { path = "../crates/bitcoin", default-features = false }
 
 [features]
@@ -24,12 +24,10 @@ default = ["std", "substrate-compat"]
 std = [
     "serde/std",
     "codec/std",
-	"primitive-types/std",
+    "primitive-types/std",
     "scale-decode",
     "scale-encode",
-
     "sp-runtime?/std",
-
     "bitcoin/std",
 ]
 runtime-benchmarks = []
