@@ -1,11 +1,7 @@
-# https://rust-lang.github.io/rustfmt/
-
-hard_tabs = false
-max_width = 120
 edition = "2021"
-wrap_comments = true
+max_width = 120
 comment_width = 120
+wrap_comments = true
+hard_tabs = false
 imports_granularity = "Crate"
-
-# TODO: https://github.com/rust-lang/rustfmt/issues/3382#issuecomment-536034758
 blank_lines_lower_bound = 0
