@@ -1,22 +1,23 @@
 [package]
-authors = ["Interlay Ltd"]
-build = "build.rs"
-edition = "2021"
-name = "interbtc-parachain"
+name = "bcbtc-parachain"
 version = "1.2.0"
+authors = ["Baron Chain"]
+edition = "2021"
+build = "build.rs"
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
 
 [[bin]]
-name = "interbtc-parachain"
+name = "bcbtc-parachain"
 
 [build-dependencies]
 substrate-build-script-utils = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.31" }
 
 [dependencies]
+# Standard library dependencies
 async-trait = "0.1"
-clap = { version = "4.0.9", features = [ "derive" ] }
+clap = { version = "4.0.9", features = ["derive"] }
 log = "0.4.8"
 codec = { package = "parity-scale-codec", version = "3.1.5" }
 serde = { version = "1.0.130", features = ["derive"], default-features = false }
@@ -26,15 +27,16 @@ jsonrpsee = { version = "0.16.2", features = ["server", "macros"] }
 serde_json = "1.0.68"
 regex = "1.5.6"
 
-# Parachain dependencies
-interlay-runtime = { package = "interlay-runtime-parachain", path = "./runtime/interlay" }
+# Local dependencies
+baronchain-runtime = { package = "baronchain-runtime-parachain", path = "./runtime/baronchain" }
 kintsugi-runtime = { package = "kintsugi-runtime-parachain", path = "./runtime/kintsugi" }
 runtime-common = { package = "runtime-common", path = "./runtime/common" }
-interbtc-rpc = { path = "../rpc" }
+bcbtc-rpc = { path = "../rpc" }
 bitcoin = { path = "../crates/bitcoin" }
 loans = { path = "../crates/loans" }
-primitives = { package = "interbtc-primitives", path = "../primitives" }
+primitives = { package = "bcbtc-primitives", path = "../primitives" }
 
+# RPC runtime API dependencies
 btc-relay-rpc-runtime-api = { path = "../crates/btc-relay/rpc/runtime-api" }
 oracle-rpc-runtime-api = { path = "../crates/oracle/rpc/runtime-api" }
 vault-registry-rpc-runtime-api = { path = "../crates/vault-registry/rpc/runtime-api" }
@@ -48,7 +50,7 @@ dex-general-rpc-runtime-api = { path = "../crates/dex-general/rpc/runtime-api" }
 dex-stable-rpc-runtime-api = { path = "../crates/dex-stable/rpc/runtime-api" }
 
 # Substrate dependencies
-sc-transaction-pool-api =  { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.31" }
+sc-transaction-pool-api = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.31" }
 sc-offchain = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.31" }
 sc-cli = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.31" }
 sc-client-api = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.31" }
@@ -128,21 +130,19 @@ pallet-evm = { git = "https://github.com/paritytech/frontier", branch = "polkado
 
 [features]
 default = []
-
 try-runtime = [
-    "try-runtime-cli", 
-    "try-runtime-cli/try-runtime", 
-    "interlay-runtime/try-runtime",
+    "try-runtime-cli",
+    "try-runtime-cli/try-runtime",
+    "baronchain-runtime/try-runtime",
     "kintsugi-runtime/try-runtime",
     "runtime-common/try-runtime",
     "frame-system/try-runtime",
     "pallet-transaction-payment/try-runtime"
 ]
-
-rococo-native = [ "polkadot-cli/rococo-native" ]
+rococo-native = ["polkadot-cli/rococo-native"]
 runtime-benchmarks = [
     "frame-system/runtime-benchmarks",
-    "interlay-runtime/runtime-benchmarks",
+    "baronchain-runtime/runtime-benchmarks",
     "kintsugi-runtime/runtime-benchmarks",
     "polkadot-service/runtime-benchmarks",
     "polkadot-cli/runtime-benchmarks",
